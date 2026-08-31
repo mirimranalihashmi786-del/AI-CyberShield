@@ -1,0 +1,22 @@
+[
+  "duration",
+  "protocol_type",
+  "service",
+  "flag",
+  "src_bytes",
+  "dst_bytes",
+  "count",
+  "srv_count",
+  "serror_rate",
+  "rerror_rate",
+  "same_srv_rate",
+  "diff_srv_rate",
+  "dst_host_count",
+  "dst_host_srv_count",
+  "dst_host_same_srv_rate",
+  "dst_host_diff_srv_rate",
+  "unique_ports_touched",
+  "conn_rate_per_sec",
+  "payload_entropy",
+  "failed_logins"
+]
