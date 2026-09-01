@@ -414,8 +414,13 @@ def recommend_actions(classification):
     return actions.get(classification, "- Investigate manually")
 
 
+init_db()
+_traffic_thread = threading.Thread(target=background_traffic_loop, daemon=True)
+_traffic_thread.start()
+
 if __name__ == "__main__":
-    init_db()
-    t = threading.Thread(target=background_traffic_loop, daemon=True)
-    t.start()
     app.run(debug=True, use_reloader=False, port=5000)
+    
+    
+
+
