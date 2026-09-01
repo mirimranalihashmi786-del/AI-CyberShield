@@ -7,3 +7,4 @@ joblib>=1.3
 # optional, only needed for packet_capture/scapy_sniffer.py
 scapy>=2.5
 requests>=2.31
+gunicorn>=21.2
