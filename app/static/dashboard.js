@@ -5,6 +5,27 @@ const attackColors = {
 
 let attackChart, timelineChart;
 let selectedEventId = null;
+let maxSeenEventId = 0;
+let firstLoad = true;
+
+function spawnBlip(color, big) {
+  const radar = document.getElementById("radar");
+  if (!radar) return;
+  const angle = Math.random() * Math.PI * 2;
+  const radius = 15 + Math.random() * 35;
+  const x = 50 + Math.cos(angle) * radius;
+  const y = 50 + Math.sin(angle) * radius;
+  const blip = document.createElement("div");
+  blip.className = "radar-blip";
+  blip.style.left = x + "%";
+  blip.style.top = y + "%";
+  blip.style.background = color;
+  blip.style.boxShadow = `0 0 8px ${color}`;
+  if (big) { blip.style.width = "8px"; blip.style.height = "8px"; }
+  radar.appendChild(blip);
+  setTimeout(() => blip.remove(), 2600);
+}
+
 
 function initCharts() {
   const ctxA = document.getElementById("attackChart");
@@ -51,7 +72,17 @@ async function refreshEvents() {
   const body = document.getElementById("eventsBody");
   body.innerHTML = "";
   events.forEach((e) => {
+    if (!firstLoad && e.id > maxSeenEventId) {
+      const bColor = e.classification === "normal" ? "#3DDC84" : (attackColors[e.classification] || "#FFB84D");
+      spawnBlip(bColor, e.classification !== "normal");
+    }
     const tr = document.createElement("tr");
+  
+  
+  
+  
+  
+    
     tr.onclick = () => openReport(e.id);
     const color = e.classification === "normal" ? "var(--green)" : attackColors[e.classification] || "var(--amber)";
     tr.innerHTML = `
@@ -63,10 +94,15 @@ async function refreshEvents() {
       <td class="dim">${(e.confidence * 100).toFixed(1)}%</td>
       <td><span class="pill ${e.status}">${e.status.toUpperCase()}</span></td>
       <td class="dim">&#8250;</td>
-    `;
-    body.appendChild(tr);
+    `; 
+body.appendChild(tr);
   });
+  if (events.length) {
+    maxSeenEventId = Math.max(maxSeenEventId, ...events.map((e) => e.id));
+  }
+  firstLoad = false;
 }
+  
 
 async function refreshStats() {
   const res = await fetch("/api/stats");
@@ -110,8 +146,13 @@ async function refreshBlocked() {
     el.innerHTML = `<div class="dim mono" style="text-align:center;padding:20px;font-size:11px;">No sources blocked</div>`;
     return;
   }
-  rows.forEach((r) => {
-    const div = document.createElement("div");
+    events.forEach((e) => {
+    if (!firstLoad && e.id > maxSeenEventId) {
+      const bColor = e.classification === "normal" ? "#3DDC84" : (attackColors[e.classification] || "#FFB84D");
+      spawnBlip(bColor, e.classification !== "normal");
+    }
+    const tr = document.createElement("tr");
+    
     div.className = "blocked-item";
     div.innerHTML = `
       <div><div class="ip">${r.ip}</div><div class="reason">${r.reason}</div></div>
