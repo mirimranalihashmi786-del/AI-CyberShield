@@ -133,3 +133,9 @@ input:checked + .slider:before { transform: translateX(20px); background: var(--
   text-align: center; font-family: 'JetBrains Mono', monospace;
   font-size: 10px; color: var(--text-dim); margin-top: 8px;
 }
+.pause-btn {
+  background: var(--panel2); border: 1px solid var(--border-bright); color: var(--text-mid);
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 6px 14px;
+  border-radius: 6px; cursor: pointer;
+}
+.pause-btn.paused { background: rgba(79,216,232,0.12); border-color: var(--cyan); color: var(--cyan); }
