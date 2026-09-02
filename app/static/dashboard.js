@@ -26,7 +26,6 @@ function spawnBlip(color, big) {
   setTimeout(() => blip.remove(), 2600);
 }
 
-
 function initCharts() {
   const ctxA = document.getElementById("attackChart");
   attackChart = new Chart(ctxA, {
@@ -77,12 +76,6 @@ async function refreshEvents() {
       spawnBlip(bColor, e.classification !== "normal");
     }
     const tr = document.createElement("tr");
-  
-  
-  
-  
-  
-    
     tr.onclick = () => openReport(e.id);
     const color = e.classification === "normal" ? "var(--green)" : attackColors[e.classification] || "var(--amber)";
     tr.innerHTML = `
@@ -94,15 +87,14 @@ async function refreshEvents() {
       <td class="dim">${(e.confidence * 100).toFixed(1)}%</td>
       <td><span class="pill ${e.status}">${e.status.toUpperCase()}</span></td>
       <td class="dim">&#8250;</td>
-    `; 
-body.appendChild(tr);
+    `;
+    body.appendChild(tr);
   });
   if (events.length) {
     maxSeenEventId = Math.max(maxSeenEventId, ...events.map((e) => e.id));
   }
   firstLoad = false;
 }
-  
 
 async function refreshStats() {
   const res = await fetch("/api/stats");
@@ -111,8 +103,6 @@ async function refreshStats() {
   document.getElementById("statAttacks").textContent = s.total_attacks.toLocaleString();
   document.getElementById("statBlocked").textContent = s.blocked_ips;
 
-  const activeThreats = Object.values(s.by_type).reduce((a, b) => a + b, 0) > 0
-    ? Math.min(20, s.total_attacks) : 0;
   const recentAttacks = s.timeline.length ? s.timeline[s.timeline.length - 1].attacks : 0;
   document.getElementById("statActive").textContent = recentAttacks;
 
@@ -148,10 +138,6 @@ async function refreshBlocked() {
   }
   rows.forEach((r) => {
     const div = document.createElement("div");
-    div.className = "blocked-item";
-    ...
-  });
-}  
     div.className = "blocked-item";
     div.innerHTML = `
       <div><div class="ip">${r.ip}</div><div class="reason">${r.reason}</div></div>
@@ -195,6 +181,17 @@ document.getElementById("autoResponseToggle").onchange = async (e) => {
   await fetch("/api/auto-response", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ enabled: e.target.checked }) });
 };
 
+const pauseBtnEl = document.getElementById("pauseBtn");
+if (pauseBtnEl) {
+  pauseBtnEl.onclick = async () => {
+    const isPaused = pauseBtnEl.classList.contains("paused");
+    const endpoint = isPaused ? "/api/resume" : "/api/pause";
+    await fetch(endpoint, { method: "POST" });
+    pauseBtnEl.classList.toggle("paused");
+    pauseBtnEl.textContent = isPaused ? "PAUSE" : "RESUME";
+  };
+}
+
 function tickClock() {
   document.getElementById("clock").textContent = new Date().toLocaleString();
 }
@@ -206,11 +203,3 @@ refreshEvents(); refreshStats(); refreshBlocked();
 setInterval(refreshEvents, 1500);
 setInterval(refreshStats, 2000);
 setInterval(refreshBlocked, 3000);
-document.getElementById("pauseBtn").onclick = async () => {
-  const btn = document.getElementById("pauseBtn");
-  const isPaused = btn.classList.contains("paused");
-  const endpoint = isPaused ? "/api/resume" : "/api/pause";
-  await fetch(endpoint, { method: "POST" });
-  btn.classList.toggle("paused");
-  btn.textContent = isPaused ? "PAUSE" : "RESUME";
-};
