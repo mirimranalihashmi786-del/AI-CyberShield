@@ -146,13 +146,12 @@ async function refreshBlocked() {
     el.innerHTML = `<div class="dim mono" style="text-align:center;padding:20px;font-size:11px;">No sources blocked</div>`;
     return;
   }
-    events.forEach((e) => {
-    if (!firstLoad && e.id > maxSeenEventId) {
-      const bColor = e.classification === "normal" ? "#3DDC84" : (attackColors[e.classification] || "#FFB84D");
-      spawnBlip(bColor, e.classification !== "normal");
-    }
-    const tr = document.createElement("tr");
-    
+  rows.forEach((r) => {
+    const div = document.createElement("div");
+    div.className = "blocked-item";
+    ...
+  });
+}  
     div.className = "blocked-item";
     div.innerHTML = `
       <div><div class="ip">${r.ip}</div><div class="reason">${r.reason}</div></div>
