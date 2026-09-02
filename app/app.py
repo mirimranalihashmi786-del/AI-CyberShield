@@ -51,6 +51,7 @@ ATTACK_META = {
 }
 
 AUTO_RESPONSE = {"enabled": True, "threshold": 0.90}
+TRAFFIC_STATE = {"running": True}
 
 
 # ------------------------------------------------------------- database ---
@@ -256,8 +257,11 @@ def simulate_and_store():
 
 def background_traffic_loop():
     while True:
-        simulate_and_store()
+        if TRAFFIC_STATE["running"]:
+            simulate_and_store()
         time.sleep(0.8)
+    
+        
 
 
 # ------------------------------------------------------------- routes -----
@@ -349,6 +353,21 @@ def api_unblock():
 def api_auto_response():
     AUTO_RESPONSE["enabled"] = bool(request.json.get("enabled", True))
     return jsonify(AUTO_RESPONSE)
+
+
+@app.route("/api/pause", methods=["POST"])
+def api_pause():
+    TRAFFIC_STATE["running"] = False
+    return jsonify({"running": False})
+
+
+@app.route("/api/resume", methods=["POST"])
+def api_resume():
+    TRAFFIC_STATE["running"] = True
+    return jsonify({"running": True})
+
+    
+    
 
 
 @app.route("/api/predict", methods=["POST"])
