@@ -207,3 +207,11 @@ refreshEvents(); refreshStats(); refreshBlocked();
 setInterval(refreshEvents, 1500);
 setInterval(refreshStats, 2000);
 setInterval(refreshBlocked, 3000);
+document.getElementById("pauseBtn").onclick = async () => {
+  const btn = document.getElementById("pauseBtn");
+  const isPaused = btn.classList.contains("paused");
+  const endpoint = isPaused ? "/api/resume" : "/api/pause";
+  await fetch(endpoint, { method: "POST" });
+  btn.classList.toggle("paused");
+  btn.textContent = isPaused ? "PAUSE" : "RESUME";
+};
